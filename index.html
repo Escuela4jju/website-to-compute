@@ -1,56 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <!-- 
-      This is an HTML comment
-      You can write text in a comment and the content won't be visible in the page
-    -->
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="https://glitch.com/favicon.ico" />
-
-  <!--
-      This is the page head - it contains info the browser uses
-      Like the title, which appears on the browser tab but not inside the page
-      Further down you'll see the content that displays in the page
-    -->
-  <title>Hello World!</title>
-
-  <!-- The website stylesheet -->
-  <link rel="stylesheet" href="/style.css" />
-
-  <!-- The website JavaScript file -->
-  <script src="/script.js" defer></script>
+  <title>Reserva de Salas</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, select { margin: 5px; }
+    .reserva { margin-top: 20px; }
+  </style>
 </head>
-
 <body>
-  <!--
-      The body includes the content you see in the page
-      Each element is defined using tags, like this <div></div>
-      The attributes like class="wrapper" let us style elements in the CSS
-    -->
-  <div class="wrapper">
-    <div class="content" role="main">
-      <h1 class="title">Oh hi website!</h1>
-      <img src="/cool-website.svg" class="illustration" alt="cool website" />
-      <div class="instructions">
-        <p>
-          Fork <a href="https://github.com/glitchdotcom/website-to-compute">this project</a> and open it in a GitHub Codespace.
-        </p>
-        <p> Follow the steps in the README to deploy your new website to Fastly in a few steps!
-        </p>
 
-      </div>
+<h2>Reservar una Sala</h2>
+<form id="reservaForm">
+  Nombre: <input type="text" id="nombre" required><br>
+  Sala:
+  <select id="sala">
+    <option>Sala de video 1</option>
+    <option>Sala de video 2</option>
+    <option>Sala de informática</option>
+  </select><br>
+  Fecha: <input type="date" id="fecha" required><br>
+  Turno:
+  <select id="turno">
+    <option>Mañana</option>
+    <option>Tarde</option>
+    <option>Noche</option>
+  </select><br>
+  <button type="submit">Reservar</button>
+</form>
 
-      <footer class="footer">
-        <div>
-          <a class="remix" href="https://github.com/glitchdotcom/website-to-compute">🚧 Get your own site</a>
-        </div>
-      </footer>
-    </div>
-  </div>
+<div class="reserva">
+  <h3>Reservas de esta semana</h3>
+  <ul id="listaReservas"></ul>
+</div>
+
+<script>
+const reservas = [];
+
+function esDeEstaSemana(fechaStr) {
+  const fecha = new Date(fechaStr);
+  const hoy = new Date();
+  const primerDia = new Date(hoy.setDate(hoy.getDate() - hoy.getDay()));
+  const ultimoDia = new Date(primerDia);
+  ultimoDia.setDate(primerDia.getDate() + 6);
+  return fecha >= primerDia && fecha <= ultimoDia;
+}
+
+document.getElementById("reservaForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const nombre = document.getElementById("nombre").value;
+  const sala = document.getElementById("sala").value;
+  const fecha = document.getElementById("fecha").value;
+  const turno = document.getElementById("turno").value;
+
+  reservas.push({ nombre, sala, fecha, turno });
+  mostrarReservas();
+});
+
+function mostrarReservas() {
+  const lista = document.getElementById("listaReservas");
+  lista.innerHTML = "";
+  reservas.filter(r => esDeEstaSemana(r.fecha)).forEach(r => {
+    const item = document.createElement("li");
+    item.textContent = `${r.fecha} - ${r.turno} - ${r.sala} (reservado por ${r.nombre})`;
+    lista.appendChild(item);
+  });
+}
+</script>
+
 </body>
-
 </html>
+
